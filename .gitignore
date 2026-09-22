@@ -1,0 +1,17 @@
+bin/
+obj/
+.vs/
+.idea/
+.vscode/
+
+*.user
+*.suo
+
+*.log
+*.tmp
+
+.env
+.env.*
+
+publish/
+out/
