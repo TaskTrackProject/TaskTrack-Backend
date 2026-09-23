@@ -40,7 +40,7 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(
                 "http://localhost:4200",
-                "https://localhost:4200"
+                "https://tasktrack-fe.onrender.com"
             )
             .AllowAnyHeader()
             .AllowAnyMethod();
