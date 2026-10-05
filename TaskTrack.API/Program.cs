@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using TaskTrack.Repo.Data;
 using TaskTrack.Repo.Repositories.Implementations;
 using TaskTrack.Repo.Repositories.Interfaces;
@@ -8,11 +9,16 @@ using TaskTrack.Service.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DbContext
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+if (!string.IsNullOrWhiteSpace(databaseUrl))
+    connectionString = ToNpgsqlConnectionString(databaseUrl);
+
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException("Configure ConnectionStrings:DefaultConnection or DATABASE_URL.");
+
 builder.Services.AddDbContext<TaskManagementDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    )
+    options.UseNpgsql(connectionString)
 );
 
 // Repository
@@ -54,10 +60,8 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-
     app.UseSwagger();
     app.UseSwaggerUI();
-
 
 app.UseHttpsRedirection();
 
@@ -69,3 +73,23 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+static string ToNpgsqlConnectionString(string url)
+{
+    if (!url.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) &&
+        !url.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+        return url;
+
+    var uri = new Uri(url);
+    var userInfo = uri.UserInfo.Split(':', 2);
+
+    return new NpgsqlConnectionStringBuilder
+    {
+        Host = uri.Host,
+        Port = uri.Port > 0 ? uri.Port : 5432,
+        Database = Uri.UnescapeDataString(uri.AbsolutePath.TrimStart('/')),
+        Username = Uri.UnescapeDataString(userInfo[0]),
+        Password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : string.Empty,
+        SslMode = SslMode.Prefer
+    }.ToString();
+}
