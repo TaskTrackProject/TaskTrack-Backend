@@ -46,7 +46,8 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(
                 "http://localhost:4200",
-                "https://tasktrack-fe.onrender.com"
+                "https://tasktrack-fe.onrender.com",
+                "https://task-track-frontend-olive.vercel.app"
             )
             .AllowAnyHeader()
             .AllowAnyMethod();
