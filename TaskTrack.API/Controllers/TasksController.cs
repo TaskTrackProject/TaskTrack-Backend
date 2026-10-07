@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using TaskTrack.Repo.DTOs.Requests;
 using TaskTrack.Service.Interfaces;
 
@@ -61,10 +62,14 @@ public class TasksController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create(
         [FromBody] TaskRequest request)
     {
-        var result = await _service.CreateAsync(request);
+        if (!int.TryParse(User.FindFirst("AccountID")?.Value, out var accountId))
+            return Unauthorized();
+
+        var result = await _service.CreateAsync(request, accountId);
 
         return CreatedAtAction(
             nameof(GetById),
@@ -73,6 +78,7 @@ public class TasksController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Update(
         int id,
         [FromBody] TaskRequest request)
@@ -87,6 +93,7 @@ public class TasksController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         var result = await _service.DeleteAsync(id);

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using TaskTrack.Repo.DTOs.Requests;
 using TaskTrack.Service.Interfaces;
 
@@ -35,6 +36,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create(
         [FromBody] TagRequest request)
     {
@@ -47,6 +49,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Update(
         int id,
         [FromBody] TagRequest request)
@@ -61,6 +64,7 @@ public class TagsController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         var result = await _service.DeleteAsync(id);

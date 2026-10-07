@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using TaskTrack.Repo.DTOs.Requests;
 using TaskTrack.Service.Interfaces;
 
@@ -59,6 +60,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create(
         [FromBody] ProjectRequest request)
     {
@@ -71,6 +73,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Update(
         int id,
         [FromBody] ProjectRequest request)
@@ -85,6 +88,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         var result = await _service.DeleteAsync(id);

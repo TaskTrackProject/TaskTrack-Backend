@@ -104,7 +104,8 @@ public class TaskService : ITaskService
     }
 
     public async Task<TaskResponse> CreateAsync(
-        TaskRequest request)
+        TaskRequest request,
+        int accountId)
     {
         _validator.ValidateRequest(request);
 
@@ -134,6 +135,8 @@ public class TaskService : ITaskService
             DueDate = request.DueDate,
 
             ProjectId = request.ProjectId,
+
+            CreatedByAccountId = accountId,
 
             IsActive = true,
 
@@ -202,7 +205,9 @@ public class TaskService : ITaskService
         if (task == null || !task.IsActive)
             return false;
 
-        await _repository.DeleteAsync(task);
+        task.IsActive = false;
+        task.ModifiedDate = DateTime.Now;
+        await _repository.UpdateAsync(task);
 
         return true;
     }

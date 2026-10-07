@@ -18,7 +18,7 @@ public interface ITaskService
         int? priority,
         int? projectId);
 
-    Task<TaskResponse> CreateAsync(TaskRequest request);
+    Task<TaskResponse> CreateAsync(TaskRequest request, int accountId);
 
     Task<TaskResponse?> UpdateAsync(
         int id,

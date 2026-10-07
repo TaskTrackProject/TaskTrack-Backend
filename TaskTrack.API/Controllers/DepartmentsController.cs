@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using TaskTrack.Repo.DTOs.Requests;
 using TaskTrack.Repo.Models;
 using TaskTrack.Service.Interfaces;
@@ -36,6 +37,7 @@ public class DepartmentsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create(
         [FromBody] DepartmentRequest request)
     {
@@ -48,6 +50,7 @@ public class DepartmentsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> Update(
         int id,
         [FromBody] DepartmentRequest request)
@@ -61,6 +64,7 @@ public class DepartmentsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
         try
